@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NSSExerciseTracker
 {
@@ -8,17 +9,16 @@ namespace NSSExerciseTracker
         static void Main(string[] args)
         {
             //List Of Exercises
-            List<Exercise> exercises = new List<Exercise>();
 
-            Exercise planetAndSpace = new Exercise()
+            Exercise overlyExcited = new Exercise()
             {
-                Name = "Planet and Spaceships",
-                Language = "C#"
+                Name = "Overly Excited",
+                Language = "JavaScript"
             };
-            Exercise randomNumbers = new Exercise()
+            Exercise solarSystem = new Exercise()
             {
-                Name = "Random Numbers",
-                Language = "Java"
+                Name = "Solar System",
+                Language = "JavaScript"
             };
             Exercise listOfDictionaries = new Exercise()
             {
@@ -30,19 +30,26 @@ namespace NSSExerciseTracker
                 Name = "English Idioms",
                 Language = "Ruby on Rails"
             };
-
-            exercises.Add(planetAndSpace);
-            exercises.Add(randomNumbers);
-            exercises.Add(listOfDictionaries);
-            exercises.Add(englishIdioms);
+            List<Exercise> exercises = new List<Exercise>()
+            {
+                overlyExcited,
+                solarSystem,
+                listOfDictionaries,
+                englishIdioms
+            };
 
             // Creating Cohort objects
             Cohort cohort35 = new Cohort("Cohort 35");
             Cohort cohort36 = new Cohort("Cohort 36");
             Cohort cohort37 = new Cohort("Cohort 37");
+            List<Cohort> cohorts = new List<Cohort>()
+            {
+                cohort35,
+                cohort36,
+                cohort37
+            };
 
             //List of students
-            List<Student> students = new List<Student>();
 
             Student student0 = new Student()
             {
@@ -54,20 +61,24 @@ namespace NSSExerciseTracker
             Student student1 = new Student()
             {
                 FirstName = "Shrijan",
-                LastName = "Shrestha",
+                LastName = "Pradhan",
                 SlackHandle = "ShrijanS ",
 
             };
             Student student2 = new Student()
             {
                 FirstName = "Mrinav",
-                LastName = "Shrestha",
+                LastName = "Joshi",
                 SlackHandle = "Mrinav.Stha ",
 
             };
-            students.Add(student0);
-            students.Add(student1);
-            students.Add(student2);
+
+            List<Student> students = new List<Student>()
+            {
+                student0,
+                student1,
+                student2
+            };
 
             // Students Adding to Cohort
 
@@ -76,7 +87,6 @@ namespace NSSExerciseTracker
             cohort36.Students.Add(student2);
 
             // Creating Instructors List
-            List<Instructor> instructors = new List<Instructor>();
 
             Instructor cSharpInstructor = new Instructor()
             {
@@ -96,19 +106,24 @@ namespace NSSExerciseTracker
                 LastName = "Mo",
                 SlackHandle = "Mo"
             };
-            instructors.Add(cSharpInstructor);
-            instructors.Add(uIUXInstructor);
-            instructors.Add(pythonInstructor);
+            List<Instructor> instructors = new List<Instructor>()
+            {
+                cSharpInstructor,
+                uIUXInstructor,
+                pythonInstructor
+            };
 
             // Assigning Instructor to Cohort
             cohort35.Instructors.Add(cSharpInstructor);
+            cohort35.Instructors.Add(pythonInstructor);
             cohort36.Instructors.Add(uIUXInstructor);
 
             //Assigning exercises to students
-            cSharpInstructor.assignExercise(student0, planetAndSpace);
-            cSharpInstructor.assignExercise(student0, randomNumbers);
-            uIUXInstructor.assignExercise(student1, planetAndSpace);
-            uIUXInstructor.assignExercise(student1, randomNumbers);
+            cSharpInstructor.assignExercise(student0, overlyExcited);
+            cSharpInstructor.assignExercise(student0, solarSystem);
+            pythonInstructor.assignExercise(student0, listOfDictionaries);
+            uIUXInstructor.assignExercise(student1, overlyExcited);
+            uIUXInstructor.assignExercise(student1, solarSystem);
 
             foreach (Student student in students)
             {
@@ -118,6 +133,75 @@ namespace NSSExerciseTracker
                     Console.WriteLine($"{student.FirstName} {student.LastName} is working on {exercise.Name}");
                 }
 
+            }
+
+            Console.WriteLine("===================================================");
+            //List of exercise in Javascript
+            var listOfExercises = exercises.Where(e => e.Language == "JavaScript").ToList();
+            Console.WriteLine($"List of Javascript exercises--");
+            foreach (var exercise in listOfExercises)
+            {
+                Console.WriteLine(exercise.Name);
+            }
+
+            Console.WriteLine("===================================================");
+
+            //List students in cohort
+            var listOfStudents = cohorts.Where(c => c.Name == "Cohort 35").SelectMany(c => c.Students).Distinct();
+            Console.WriteLine($"Students in cohort-35");
+            foreach (var student in listOfStudents)
+            {
+                Console.WriteLine($"{student.FirstName} {student.LastName}");
+            }
+
+            Console.WriteLine("===================================================");
+            //List of Instructors in cohort
+
+            var listOfInstructors = cohorts.Where(c => c.Name == "Cohort 35").SelectMany(c => c.Instructors).Distinct();
+            Console.WriteLine($"Instructors assigned for cohort-35");
+            foreach (var instructor in listOfInstructors)
+            {
+                Console.WriteLine($"{instructor.FirstName} {instructor.LastName}");
+            }
+
+            Console.WriteLine("===================================================");
+            //Sort the students by their last name.
+
+            var sortedStudents = students.OrderBy(s => s.LastName);
+            foreach (var student in sortedStudents)
+            {
+                Console.WriteLine(student.LastName);
+            }
+
+            Console.WriteLine("===================================================");
+            //Display any students that aren't working on any exercises
+            var studentWithNoExercises = students.Where(s => s.Exercises.Count() == 0).ToList();
+            foreach (var student in studentWithNoExercises)
+            {
+                Console.WriteLine($"{student.FirstName} {student.LastName}");
+            }
+
+            Console.WriteLine("===================================================");
+            //Which student is working on the most exercises? 
+            var studentWithMoreExercise = students.Select(s => new
+            {
+                firstName = s.FirstName,
+                numberOfExercises = s.Exercises.Count()
+            })
+                .OrderByDescending(s => s.numberOfExercises)
+                .FirstOrDefault();
+            Console.WriteLine($"{studentWithMoreExercise.firstName} has {studentWithMoreExercise.numberOfExercises} exercises");
+
+            Console.WriteLine("===================================================");
+            //How many students in each cohort?
+            var numOfStudents = cohorts.Select(c => new
+            {
+                cohortName = c.Name,
+                numberOfStudentsInCohort = c.Students.Count()
+            }).ToList();
+            foreach (var student in numOfStudents)
+            {
+                Console.WriteLine($"{student.cohortName} has {student.numberOfStudentsInCohort} students!");
             }
 
         }
