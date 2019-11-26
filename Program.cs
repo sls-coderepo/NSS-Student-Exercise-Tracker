@@ -204,6 +204,11 @@ namespace NSSExerciseTracker
                 Console.WriteLine($"{student.cohortName} has {student.numberOfStudentsInCohort} students!");
             }
 
+            var numOfStudents1 = cohorts.GroupBy(c => c.Name)
+                                        .OrderByDescending(c => c.Count())
+                                        .First();
+
+
         }
     }
 }
